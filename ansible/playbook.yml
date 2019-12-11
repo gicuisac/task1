@@ -1,0 +1,44 @@
+---
+- name: Playbook to run Hello World app
+  hosts: all
+  remote_user: vagrant
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: install nginx
+#      command: echo "Hello World"
+      yum:
+        name: nginx
+        state: present
+
+    - name : Put SELinux in permissive mode
+      selinux:
+        policy: targeted
+        state: permissive
+
+    - name: Link nginx config file for lb1
+      file: 
+        src: /opt/config/hello-world-lb.conf
+        dest: /etc/nginx/conf.d/hello-world-lb.conf
+        state: link
+      when: inventory_hostname == 'lb1'
+
+    - name: Link nginx config file for web
+      file: 
+        src: /opt/config/hello-world.conf
+        dest: /etc/nginx/conf.d/hello-world.conf
+        state: link
+      when: inventory_hostname == 'web1' or inventory_hostname == 'web2'
+
+    - name: Link app directory to nginx
+      file: 
+        src: /opt/hello-world.com
+        dest: /usr/share/nginx/hello-world.com
+        state: link
+      when: inventory_hostname == 'web1' or inventory_hostname == 'web2'
+
+    - name : start nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
