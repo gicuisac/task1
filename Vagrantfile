@@ -9,7 +9,8 @@ Vagrant.configure("2") do |config|
 # VM's definition
   config.vm.define "lb1" do |lb|
     lb.vm.synced_folder "config/lb", "/opt/config", type: "nfs"
-    lb.vm.network :forwarded_port, host: 45678, guest: 8080
+    lb.vm.network :forwarded_port, host: 8080, guest: 8080
+    lb.vm.network :forwarded_port, host: 10443, guest: 443
     lb.vm.network :private_network, :ip => '192.168.111.10'
     lb.vm.hostname = 'lb1'
     lb.vm.provider :virtualbox do |vb|

@@ -23,6 +23,13 @@
         state: link
       when: inventory_hostname == 'lb1'
 
+    - name: Link certs dir for lb1
+      file:
+        src: /opt/config/ssl
+        dest: /etc/nginx/conf.d/ssl
+        state: link
+      when: inventory_hostname == 'lb1'
+
     - name: Link nginx config file for web
       file: 
         src: /opt/config/hello-world.conf
